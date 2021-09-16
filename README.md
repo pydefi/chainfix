@@ -1,7 +1,7 @@
-
 # Welcome to Chainfix
+![chainfix](https://github.com/pydefi/chainfix/raw/main/docs/logo/chainfix_logo.png)
 
-Chainfix provides a way to represent numbers and perform math operations using fixed-point data types.
+Chainfix provides a way to represent numbers and perform simple math operations using fixed-point data types.
 
 Chainfix supports binary fixed-point (base-2), decimal fixed-point (base-10)
 and even arbitrary (base-N) fixed-point types.
@@ -12,9 +12,7 @@ FPGAs, ASICS, and signal processing applications.
 
 Decimal-fixed point types are commonly found in financial applications, blockchain, 
 decentralized finance, and smart contracts
-(e.g. the [solidity programming language](https://docs.soliditylang.org/).
-
-
+(e.g. the [solidity programming language](https://docs.soliditylang.org/)).
 
 # Contributing
 
