@@ -1,11 +1,13 @@
+from typing import Any, TYPE_CHECKING, TypeVar, Union
 
 __version__ = '0.0.1'
 
 __all__ = ['Sfixd', 'Ufixd', 'Sfixb', 'Ufixb']
 
-
 default_width = 4
 default_precision = 6
+
+T = TypeVar("T")
 
 
 class _Fix:
@@ -22,46 +24,22 @@ class _Fix:
 
     __slots__ = ("_base", "_int", "_precision", "_signed", "_width")
 
-    value = property(
-        lambda self: self._int / self._base ** self._precision
-    )
-
-    int = property(lambda self: self._int)
-
-    precision = property(lambda self: self._precision)
-
-    num_bits = property(lambda self: 8 * self._width)
-
-    upper_bound = property(
-        lambda self: self.max_int / self._base ** self._precision
-    )
-
-    lower_bound = property(
-        lambda self: self.min_int / self._base ** self._precision
-    )
-
-    @property
-    def max_int(self):
-        if self._signed:
-            return int(2 ** (self.num_bits - 1) - 1)
-        else:
-            return int(2 ** self.num_bits - 1)
-
-    @property
-    def min_int(self):
-        if self._signed:
-            return -(2 ** (self.num_bits - 1))
-        else:
-            return int(0)
+    if TYPE_CHECKING:
+        _base: int
+        _int: int
+        _precision: int
+        _signed: bool
+        _width: int
 
     def __new__(
-        cls,
-        base,
-        value=0,
-        signed=True,
-        precision=default_precision,
-        width=default_width,
-    ):
+
+            cls,
+            base: int,
+            value: Union[int, float],
+            signed: bool,
+            precision: int = default_precision,
+            width: int = default_width,
+    ) -> Any:
         self = object.__new__(cls)
         self._base = base
         self._signed = signed
@@ -76,11 +54,43 @@ class _Fix:
 
         return self
 
-    def __bool__(self):
+    value = property(
+        lambda self: self._int / self._base ** self._precision
+    )
+
+    precision = property(lambda self: self._precision)
+
+    num_bits = property(lambda self: 8 * self._width)
+
+    upper_bound = property(
+        lambda self: self.max_int / self._base ** self._precision
+    )
+
+    lower_bound = property(
+        lambda self: self.min_int / self._base ** self._precision
+    )
+
+    @property
+    def max_int(self) -> int:
+        if self._signed:
+            return int(2 ** (self.num_bits - 1) - 1)
+        else:
+            return int(2 ** self.num_bits - 1)
+
+    @property
+    def min_int(self) -> int:
+        if self._signed:
+            return int(-(2 ** (self.num_bits - 1)))
+        else:
+            return int(0)
+
+    int = property(lambda self: self._int)
+
+    def __bool__(self) -> bool:
         return self._int != 0
 
     @property
-    def hex(self):
+    def hex(self) -> str:
         digits = self._width * 2
         if self._int >= 0:
             return "{num:0{digits}x}".format(num=self._int, digits=digits)
@@ -93,88 +103,104 @@ class _Fix:
 class Sfix(_Fix):
     """A Signed fixed point number."""
 
-    def __new__(
-        cls,
-        base,
-        value=0,
-        precision=default_precision,
-        width=default_width,
-    ):
-        self = super().__new__(
-            cls,
-            base=base,
-            value=value,
-            signed=True,
-            precision=precision,
-            width=width,
-        )
+    def __new__(cls,
+                base: int,
+                value: Union[int, float] = 0,
+                precision: int = default_precision,
+                width: int = default_width
+                ) -> Any:
+        self = super().__new__(cls,
+                               base=base,
+                               value=value,
+                               signed=True,
+                               precision=precision,
+                               width=width,
+                               )
         return self
 
 
 class Ufix(_Fix):
     """An Unsigned fixed point number."""
 
-    def __new__(
-        cls,
-        base,
-        value=0,
-        precision=default_precision,
-        width=default_width,
-    ):
-        self = super().__new__(
-            cls,
-            base=base,
-            value=value,
-            signed=False,
-            precision=precision,
-            width=width,
-        )
+    def __new__(cls,
+                base: int,
+                value: Union[int, float] = 0,
+                precision: int = default_precision,
+                width: int = default_width
+                ) -> Any:
+        self = super().__new__(cls,
+                               base=base,
+                               value=value,
+                               signed=False,
+                               precision=precision,
+                               width=width,
+                               )
         return self
 
 
 class Sfixb(Sfix):
     """A Signed fixed point number (binary scaled)."""
 
-    def __new__(
-        cls, value=0, precision=default_precision, width=default_width
-    ):
-        self = super().__new__(
-            cls, base=2, value=value, precision=precision, width=width
-        )
+    def __new__(cls,
+                value: Union[int, float] = 0,
+                precision: int = default_precision,
+                width: int = default_width
+                ) -> Any:
+        self = super().__new__(cls,
+                               base=2,
+                               value=value,
+                               precision=precision,
+                               width=width
+                               )
         return self
 
 
 class Ufixb(Ufix):
     """An Unsigned fixed point number (binary scaled)."""
 
-    def __new__(
-        cls, value=0, precision=default_precision, width=default_width
-    ):
-        self = super().__new__(
-            cls, base=2, value=value, precision=precision, width=width
-        )
+    def __new__(cls,
+                value: Union[int, float] = 0,
+                precision: int = default_precision,
+                width: int = default_width
+                ) -> Any:
+        self = super().__new__(cls,
+                               base=2,
+                               value=value,
+                               precision=precision,
+                               width=width
+                               )
         return self
 
 
 class Sfixd(Sfix):
     """A Signed fixed point number (decimal scaled)."""
 
-    def __new__(
-        cls, value=0, precision=default_precision, width=default_width
-    ):
-        self = super().__new__(
-            cls, base=10, value=value, precision=precision, width=width
-        )
+    def __new__(cls,
+                value: Union[int, float] = 0,
+                precision: int = default_precision,
+                width: int = default_width
+                ) -> Any:
+        self = super().__new__(cls,
+                               base=10,
+                               value=value,
+                               precision=precision,
+                               width=width
+                               )
         return self
 
 
 class Ufixd(Ufix):
     """An Unsigned fixed point number (decimal scaled)."""
 
-    def __new__(
-        cls, value=0, precision=default_precision, width=default_width
-    ):
-        self = super().__new__(
-            cls, base=10, value=value, precision=precision, width=width
-        )
+    def __new__(cls,
+                value: Union[int, float] = 0,
+                precision: int = default_precision,
+                width: int = default_width
+                ) -> Any:
+        self = super().__new__(cls,
+                               base=10,
+                               value=value,
+                               precision=precision,
+                               width=width
+                               )
         return self
