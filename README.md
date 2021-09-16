@@ -5,16 +5,16 @@ Chainfix provides a set of fixed-point data types that may be useful for signal 
 
 # Contributing
 
-Chainfix can be installed in developer mode after cloding the repository:
+Chainfix can be installed in developer mode after cloning the repository:
 
 ```shell
-pip install -e .
+$ pip install -e .
 ```
 
 To run all tests:
 
 ```shell
-pytest
+$ pytest
 ```
 
 
