@@ -28,26 +28,24 @@ class _Fix:
     integers is `base ** precision`
     """
 
-    __slots__ = ("_int", "_base", "_signed", "_wordlength", "_precision")
+    __slots__ = ("_int", "_signed", "_wordlength", "_precision")
+
+    _base = None
 
     if TYPE_CHECKING:
         _int: int
-        _base: int
         _signed: bool
         _wordlength: int
         _precision: int
 
     def __new__(
-
             cls,
             value: FromTypes,
-            base: int,
             signed: bool,
             wordlength: int = default_wordlength,
             precision: int = default_precision
     ) -> Any:
         self = object.__new__(cls)
-        self._base = base
         self._signed = signed
         self._wordlength = wordlength
         self._precision = precision
@@ -109,13 +107,11 @@ class Sfix(_Fix):
 
     def __new__(cls,
                 value: FromTypes,
-                base: int,
                 wordlength: int = default_wordlength,
                 precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
-                               base=base,
                                signed=True,
                                wordlength=wordlength,
                                precision=precision
@@ -128,13 +124,11 @@ class Ufix(_Fix):
 
     def __new__(cls,
                 value: FromTypes,
-                base: int,
                 precision: int = default_precision,
                 wordlength: int = default_wordlength
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
-                               base=base,
                                signed=False,
                                wordlength=wordlength,
                                precision=precision
@@ -144,6 +138,7 @@ class Ufix(_Fix):
 
 class Sfixb(Sfix):
     """A Signed fixed point number (binary scaled)."""
+    _base = 2
 
     def __new__(cls,
                 value: FromTypes = 0,
@@ -151,7 +146,6 @@ class Sfixb(Sfix):
                 wordlength: int = default_wordlength
                 ) -> Any:
         self = super().__new__(cls,
-                               base=2,
                                value=value,
                                precision=precision,
                                wordlength=wordlength
@@ -161,6 +155,7 @@ class Sfixb(Sfix):
 
 class Ufixb(Ufix):
     """An Unsigned fixed point number (binary scaled)."""
+    _base = 2
 
     def __new__(cls,
                 value: FromTypes = 0,
@@ -169,7 +164,6 @@ class Ufixb(Ufix):
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
-                               base=2,
                                wordlength=wordlength,
                                precision=precision
                                )
@@ -178,6 +172,7 @@ class Ufixb(Ufix):
 
 class Sfixd(Sfix):
     """A Signed fixed point number (decimal scaled)."""
+    _base = 10
 
     def __new__(cls,
                 value: FromTypes = 0,
@@ -186,7 +181,6 @@ class Sfixd(Sfix):
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
-                               base=10,
                                wordlength=wordlength,
                                precision=precision
                                )
@@ -195,6 +189,7 @@ class Sfixd(Sfix):
 
 class Ufixd(Ufix):
     """An Unsigned fixed point number (decimal scaled)."""
+    _base = 10
 
     def __new__(cls,
                 value: FromTypes = 0,
@@ -203,7 +198,6 @@ class Ufixd(Ufix):
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
-                               base=10,
                                wordlength=wordlength,
                                precision=precision
                                )
