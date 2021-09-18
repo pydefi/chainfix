@@ -1,13 +1,13 @@
 import pytest
 
-from chainfix import Sfixb
-from chainfix import Sfixd
+from chainfix import Fixb
+from chainfix import Fixd
 from chainfix import Ufixb
 from chainfix import Ufixd
 
 
 def test_fix():
-    s = Sfixd(0)
+    s = Fixd(0)
     print(s)
     assert s.max_int == 2 ** 31 - 1
     assert s.min_int == -(2 ** 31)
@@ -17,7 +17,7 @@ def test_fix():
     assert u.max_int == 2 ** 32 - 1
     assert u.min_int == 0
 
-    assert isinstance(s, Sfixd)
+    assert isinstance(s, Fixd)
 
     with pytest.raises(TypeError):
         Ufixd("5")
@@ -31,11 +31,11 @@ def test_fix():
 
 
 def test_fix_bounds():
-    u10 = Ufixd(0, width=2, precision=3)
-    s10 = Sfixd(0, width=2, precision=3)
+    u10 = Ufixd(0, wordlength=16, precision=3)
+    s10 = Fixd(0, wordlength=16, precision=3)
 
-    u2 = Ufixb(0, width=2, precision=3)
-    s2 = Sfixb(0, width=2, precision=3)
+    u2 = Ufixb(0, wordlength=16, precision=3)
+    s2 = Fixb(0, wordlength=16, precision=3)
 
     assert s10.max_int == 2 ** 15 - 1
     assert s10.min_int == -(2 ** 15)
@@ -79,5 +79,6 @@ def test_undefined_ops():
 
 
 def test_stored_hex():
-    print(Ufixd(33, precision=0).hex)
-    print(Sfixd(-2, precision=0).hex)
+    assert Ufixd(33, wordlength=32, precision=0).hex == '00000021'
+
+    assert Fixd(-2, 32, 0).hex == 'fffffffe'

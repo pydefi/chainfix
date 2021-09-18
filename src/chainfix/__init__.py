@@ -1,3 +1,4 @@
+import math
 from typing import Any
 from typing import TYPE_CHECKING
 from typing import TypeVar
@@ -5,15 +6,17 @@ from typing import Union
 
 __version__ = '0.0.1'
 
-__all__ = ['Sfixd', 'Ufixd', 'Sfixb', 'Ufixb']
+__all__ = ['Fixd', 'Ufixd', 'Fixb', 'Ufixb']
 
-default_width = 4
+default_wordlength = 32
 default_precision = 6
 
 T = TypeVar("T")
 
+FromTypes = Union[int, float]
 
-class _Fix:
+
+class _FixedPoint:
     """Fixed-Point Class
 
     The Fix class represents fractional numbers using a stored integer
@@ -25,29 +28,27 @@ class _Fix:
     integers is `base ** precision`
     """
 
-    __slots__ = ("_base", "_int", "_precision", "_signed", "_width")
+    __slots__ = ("_int", "_signed", "_wordlength", "_precision")
+
+    _base = None
 
     if TYPE_CHECKING:
-        _base: int
         _int: int
-        _precision: int
         _signed: bool
-        _width: int
+        _wordlength: int
+        _precision: int
 
     def __new__(
-
             cls,
-            base: int,
-            value: Union[int, float],
+            value: FromTypes,
             signed: bool,
-            precision: int = default_precision,
-            width: int = default_width,
+            wordlength: int = default_wordlength,
+            precision: int = default_precision
     ) -> Any:
         self = object.__new__(cls)
-        self._base = base
         self._signed = signed
+        self._wordlength = wordlength
         self._precision = precision
-        self._width = width
 
         if not isinstance(value, (int, float)):
             raise TypeError("Value {} must be int or float".format(value))
@@ -63,8 +64,6 @@ class _Fix:
 
     precision = property(lambda self: self._precision)
 
-    num_bits = property(lambda self: 8 * self._width)
-
     upper_bound = property(
         lambda self: self.max_int / self._base ** self._precision
     )
@@ -76,14 +75,14 @@ class _Fix:
     @property
     def max_int(self) -> int:
         if self._signed:
-            return int(2 ** (self.num_bits - 1) - 1)
+            return int(2 ** (self._wordlength - 1) - 1)
         else:
-            return int(2 ** self.num_bits - 1)
+            return int(2 ** self._wordlength - 1)
 
     @property
     def min_int(self) -> int:
         if self._signed:
-            return int(-(2 ** (self.num_bits - 1)))
+            return int(-(2 ** (self._wordlength - 1)))
         else:
             return int(0)
 
@@ -94,116 +93,112 @@ class _Fix:
 
     @property
     def hex(self) -> str:
-        digits = self._width * 2
+        digits = math.ceil(self._wordlength / 4)
         if self._int >= 0:
             return "{num:0{digits}x}".format(num=self._int, digits=digits)
         else:
             return "{num:0{digits}x}".format(
-                num=(2 ** self.num_bits + self._int), digits=digits
+                num=(2 ** self._wordlength + self._int), digits=digits
             )
 
 
-class Sfix(_Fix):
+class Fix(_FixedPoint):
     """A Signed fixed point number."""
 
     def __new__(cls,
-                base: int,
-                value: Union[int, float] = 0,
-                precision: int = default_precision,
-                width: int = default_width
+                value: FromTypes,
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
-                               base=base,
                                value=value,
                                signed=True,
-                               precision=precision,
-                               width=width,
+                               wordlength=wordlength,
+                               precision=precision
                                )
         return self
 
 
-class Ufix(_Fix):
+class Ufix(_FixedPoint):
     """An Unsigned fixed point number."""
 
     def __new__(cls,
-                base: int,
-                value: Union[int, float] = 0,
-                precision: int = default_precision,
-                width: int = default_width
+                value: FromTypes,
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
-                               base=base,
                                value=value,
                                signed=False,
-                               precision=precision,
-                               width=width,
+                               wordlength=wordlength,
+                               precision=precision
                                )
         return self
 
 
-class Sfixb(Sfix):
+class Fixb(Fix):
     """A Signed fixed point number (binary scaled)."""
+    _base = 2
 
     def __new__(cls,
-                value: Union[int, float] = 0,
-                precision: int = default_precision,
-                width: int = default_width
+                value: FromTypes = 0,
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
-                               base=2,
                                value=value,
-                               precision=precision,
-                               width=width
+                               wordlength=wordlength,
+                               precision=precision
                                )
         return self
 
 
 class Ufixb(Ufix):
     """An Unsigned fixed point number (binary scaled)."""
+    _base = 2
 
     def __new__(cls,
-                value: Union[int, float] = 0,
-                precision: int = default_precision,
-                width: int = default_width
+                value: FromTypes = 0,
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
-                               base=2,
                                value=value,
-                               precision=precision,
-                               width=width
+                               wordlength=wordlength,
+                               precision=precision
                                )
         return self
 
 
-class Sfixd(Sfix):
+class Fixd(Fix):
     """A Signed fixed point number (decimal scaled)."""
+    _base = 10
 
     def __new__(cls,
-                value: Union[int, float] = 0,
-                precision: int = default_precision,
-                width: int = default_width
+                value: FromTypes = 0,
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
-                               base=10,
                                value=value,
-                               precision=precision,
-                               width=width
+                               wordlength=wordlength,
+                               precision=precision
                                )
         return self
 
 
 class Ufixd(Ufix):
     """An Unsigned fixed point number (decimal scaled)."""
+    _base = 10
 
     def __new__(cls,
-                value: Union[int, float] = 0,
-                precision: int = default_precision,
-                width: int = default_width
+                value: FromTypes = 0,
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
-                               base=10,
                                value=value,
-                               precision=precision,
-                               width=width
+                               wordlength=wordlength,
+                               precision=precision
                                )
         return self
