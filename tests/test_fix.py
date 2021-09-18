@@ -79,5 +79,6 @@ def test_undefined_ops():
 
 
 def test_stored_hex():
-    print(Ufixd(33, precision=0).hex)
-    print(Fixd(-2, precision=0).hex)
+    assert Ufixd(33, wordlength=32, precision=0).hex == '00000021'
+
+    assert Fixd(-2, 32, 0).hex == 'fffffffe'

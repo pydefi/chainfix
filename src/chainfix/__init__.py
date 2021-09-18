@@ -124,8 +124,8 @@ class Ufix(_FixedPoint):
 
     def __new__(cls,
                 value: FromTypes,
-                precision: int = default_precision,
-                wordlength: int = default_wordlength
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
@@ -142,13 +142,13 @@ class Fixb(Fix):
 
     def __new__(cls,
                 value: FromTypes = 0,
-                precision: int = default_precision,
-                wordlength: int = default_wordlength
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
-                               precision=precision,
-                               wordlength=wordlength
+                               wordlength=wordlength,
+                               precision=precision
                                )
         return self
 
@@ -176,8 +176,8 @@ class Fixd(Fix):
 
     def __new__(cls,
                 value: FromTypes = 0,
-                precision: int = default_precision,
-                wordlength: int = default_wordlength
+                wordlength: int = default_wordlength,
+                precision: int = default_precision
                 ) -> Any:
         self = super().__new__(cls,
                                value=value,
