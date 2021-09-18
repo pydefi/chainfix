@@ -31,11 +31,11 @@ def test_fix():
 
 
 def test_fix_bounds():
-    u10 = Ufixd(0, width=2, precision=3)
-    s10 = Sfixd(0, width=2, precision=3)
+    u10 = Ufixd(0, wordlength=16, precision=3)
+    s10 = Sfixd(0, wordlength=16, precision=3)
 
-    u2 = Ufixb(0, width=2, precision=3)
-    s2 = Sfixb(0, width=2, precision=3)
+    u2 = Ufixb(0, wordlength=16, precision=3)
+    s2 = Sfixb(0, wordlength=16, precision=3)
 
     assert s10.max_int == 2 ** 15 - 1
     assert s10.min_int == -(2 ** 15)
