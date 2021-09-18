@@ -6,7 +6,7 @@ from typing import Union
 
 __version__ = '0.0.1'
 
-__all__ = ['Sfixd', 'Ufixd', 'Sfixb', 'Ufixb']
+__all__ = ['Fixd', 'Ufixd', 'Fixb', 'Ufixb']
 
 default_wordlength = 32
 default_precision = 6
@@ -16,7 +16,7 @@ T = TypeVar("T")
 FromTypes = Union[int, float]
 
 
-class _Fix:
+class _FixedPoint:
     """Fixed-Point Class
 
     The Fix class represents fractional numbers using a stored integer
@@ -102,7 +102,7 @@ class _Fix:
             )
 
 
-class Sfix(_Fix):
+class Fix(_FixedPoint):
     """A Signed fixed point number."""
 
     def __new__(cls,
@@ -119,7 +119,7 @@ class Sfix(_Fix):
         return self
 
 
-class Ufix(_Fix):
+class Ufix(_FixedPoint):
     """An Unsigned fixed point number."""
 
     def __new__(cls,
@@ -136,7 +136,7 @@ class Ufix(_Fix):
         return self
 
 
-class Sfixb(Sfix):
+class Fixb(Fix):
     """A Signed fixed point number (binary scaled)."""
     _base = 2
 
@@ -170,7 +170,7 @@ class Ufixb(Ufix):
         return self
 
 
-class Sfixd(Sfix):
+class Fixd(Fix):
     """A Signed fixed point number (decimal scaled)."""
     _base = 10
 
