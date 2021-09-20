@@ -1,9 +1,13 @@
 import pytest
 
 from chainfix import Fixb
+from chainfix import Fixb32
 from chainfix import Fixd
+from chainfix import Fixd32
 from chainfix import Ufixb
+from chainfix import Ufixb32
 from chainfix import Ufixd
+from chainfix import Ufixd32
 
 
 def test_fix():
@@ -67,7 +71,7 @@ def test_fix_bounds():
 
 
 def test_bool():
-    u = Ufixd(-1)
+    u = Fixd(-1)
     assert u
     u = Ufixd(0)
     assert not u
@@ -78,7 +82,23 @@ def test_undefined_ops():
         Ufixd(3.1) + Ufixd(3.3)
 
 
-def test_stored_hex():
-    assert Ufixd(33, wordlength=32, precision=0).hex == '00000021'
+def test_stored_hex_bin():
+    assert Ufixd(33, 16, 0).hex == '0x0021'
+    assert Ufixd(33, 16, 0).bin == '0b0000000000100001'
 
-    assert Fixd(-2, 32, 0).hex == 'fffffffe'
+    assert Fixd(-2, 16, 0).hex == '0xfffe'
+    assert Fixd(-2, 16, 0).bin == '0b1111111111111110'
+
+
+def test_32_bit_types():
+    assert Ufixd32(0, 2).lower_bound == 0.00
+    assert Ufixd32(0, 2).upper_bound == 42949672.95
+
+    assert Fixd32(0, 2).lower_bound == -21474836.48
+    assert Fixd32(0, 2).upper_bound == 21474836.47
+
+    assert Ufixb32(0, 2).lower_bound == 0.00
+    assert Ufixb32(0, 2).upper_bound == 1073741823.75
+
+    assert Fixb32(0, 2).lower_bound == -536870912.0
+    assert Fixb32(0, 2).upper_bound == 536870911.75
