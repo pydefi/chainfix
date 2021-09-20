@@ -19,7 +19,7 @@ FromTypes = Union[int, float]
 class _FixedPoint:
     """Fixed-Point Class
 
-    The Fix class represents fractional numbers using a stored integer
+    The _Fix class represents fractional numbers using a stored integer
     representation, with a fixed degree of precision.
     Integers are stored using two's complement representation.
     The range of representable numbers is determined by the number of bytes
@@ -159,7 +159,11 @@ class _FixedPoint:
         return int(self.value)
 
 
-class Fix(_FixedPoint):
+# --------------------------------------------------------------------------
+# Base class for signed/unsigned fixed Point Types
+# --------------------------------------------------------------------------
+
+class _Fix(_FixedPoint):
     """A Signed fixed point number."""
 
     _signed = True
@@ -177,7 +181,7 @@ class Fix(_FixedPoint):
         return self
 
 
-class Ufix(_FixedPoint):
+class _Ufix(_FixedPoint):
     """An Unsigned fixed point number."""
 
     _signed = False
@@ -195,7 +199,11 @@ class Ufix(_FixedPoint):
         return self
 
 
-class Fixb(Fix):
+# --------------------------------------------------------------------------
+# Binary Fixed Point Types
+# --------------------------------------------------------------------------
+
+class Fixb(_Fix):
     """A Signed fixed point number (binary scaled)."""
     _base = 2
 
@@ -212,7 +220,7 @@ class Fixb(Fix):
         return self
 
 
-class Ufixb(Ufix):
+class Ufixb(_Ufix):
     """An Unsigned fixed point number (binary scaled)."""
     _base = 2
 
@@ -229,7 +237,10 @@ class Ufixb(Ufix):
         return self
 
 
-class Fixd(Fix):
+# --------------------------------------------------------------------------
+# Decimal Fixed Point Types
+# --------------------------------------------------------------------------
+class Fixd(_Fix):
     """A Signed fixed point number (decimal scaled)."""
     _base = 10
 
@@ -246,7 +257,7 @@ class Fixd(Fix):
         return self
 
 
-class Ufixd(Ufix):
+class Ufixd(_Ufix):
     """An Unsigned fixed point number (decimal scaled)."""
     _base = 10
 
@@ -258,6 +269,65 @@ class Ufixd(Ufix):
         self = super().__new__(cls,
                                value=value,
                                wordlength=wordlength,
+                               precision=precision
+                               )
+        return self
+
+
+# --------------------------------------------------------------------------
+# 32-bit Helper Types
+# --------------------------------------------------------------------------
+class Fixb32(Fixb):
+
+    def __new__(cls,
+                value: FromTypes = 0,
+                precision: int = default_precision
+                ) -> Any:
+        self = super().__new__(cls,
+                               value=value,
+                               wordlength=32,
+                               precision=precision
+                               )
+        return self
+
+
+class Ufixb32(Ufixb):
+
+    def __new__(cls,
+                value: FromTypes = 0,
+                precision: int = default_precision
+                ) -> Any:
+        self = super().__new__(cls,
+                               value=value,
+                               wordlength=32,
+                               precision=precision
+                               )
+        return self
+
+
+class Fixd32(Fixd):
+
+    def __new__(cls,
+                value: FromTypes = 0,
+                precision: int = default_precision
+                ) -> Any:
+        self = super().__new__(cls,
+                               value=value,
+                               wordlength=32,
+                               precision=precision
+                               )
+        return self
+
+
+class Ufixd32(Ufixd):
+
+    def __new__(cls,
+                value: FromTypes = 0,
+                precision: int = default_precision
+                ) -> Any:
+        self = super().__new__(cls,
+                               value=value,
+                               wordlength=32,
                                precision=precision
                                )
         return self

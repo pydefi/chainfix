@@ -1,9 +1,13 @@
 import pytest
 
 from chainfix import Fixb
+from chainfix import Fixb32
 from chainfix import Fixd
+from chainfix import Fixd32
 from chainfix import Ufixb
+from chainfix import Ufixb32
 from chainfix import Ufixd
+from chainfix import Ufixd32
 
 
 def test_fix():
@@ -84,3 +88,17 @@ def test_stored_hex_bin():
 
     assert Fixd(-2, 16, 0).hex == '0xfffe'
     assert Fixd(-2, 16, 0).bin == '0b1111111111111110'
+
+
+def test_32_bit_types():
+    assert Ufixd32(0, 2).lower_bound == 0.00
+    assert Ufixd32(0, 2).upper_bound == 42949672.95
+
+    assert Fixd32(0, 2).lower_bound == -21474836.48
+    assert Fixd32(0, 2).upper_bound == 21474836.47
+
+    assert Ufixb32(0, 2).lower_bound == 0.00
+    assert Ufixb32(0, 2).upper_bound == 1073741823.75
+
+    assert Fixb32(0, 2).lower_bound == -536870912.0
+    assert Fixb32(0, 2).upper_bound == 536870911.75
