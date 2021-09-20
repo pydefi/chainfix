@@ -1,6 +1,8 @@
 # Welcome to Chainfix
 ![chainfix](https://github.com/pydefi/chainfix/raw/main/docs/logo/chainfix_logo.png)
 
+![ci](https://github.com/pydefi/chainfix/actions/workflows/tox.yml/badge.svg)
+
 Chainfix provides a way to represent numbers and perform simple math operations using fixed-point data types.
 
 Chainfix supports binary fixed-point (base-2), decimal fixed-point (base-10)
