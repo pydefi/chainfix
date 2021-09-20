@@ -67,7 +67,7 @@ def test_fix_bounds():
 
 
 def test_bool():
-    u = Ufixd(-1)
+    u = Fixd(-1)
     assert u
     u = Ufixd(0)
     assert not u
@@ -78,7 +78,9 @@ def test_undefined_ops():
         Ufixd(3.1) + Ufixd(3.3)
 
 
-def test_stored_hex():
-    assert Ufixd(33, wordlength=32, precision=0).hex == '00000021'
+def test_stored_hex_bin():
+    assert Ufixd(33, 16, 0).hex == '0x0021'
+    assert Ufixd(33, 16, 0).bin == '0b0000000000100001'
 
-    assert Fixd(-2, 32, 0).hex == 'fffffffe'
+    assert Fixd(-2, 16, 0).hex == '0xfffe'
+    assert Fixd(-2, 16, 0).bin == '0b1111111111111110'
