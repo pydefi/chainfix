@@ -56,9 +56,9 @@ class _FixedPoint:
         # Store integer with default saturate-on-overflow logic
         stored_integer = int(round(value * self._base ** self._precision))
         if stored_integer > self.max_int:
-            self._int = self.max_int
+            raise ValueError('Value too large for data type.  Must be in range: {} to {}'.format(self.lower_bound, self.upper_bound))
         elif stored_integer < self.min_int:
-            self._int = self.min_int
+            raise ValueError('Value too small for data type.  Must be in range: {} to {}'.format(self.lower_bound, self.upper_bound))
         else:
             self._int = stored_integer
 
