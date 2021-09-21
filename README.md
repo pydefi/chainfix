@@ -17,9 +17,7 @@ decentralized finance, and smart contracts
 (e.g. the [solidity programming language](https://docs.soliditylang.org/)).
 
 
-# Examples
-
-## Decimal fixed-point representations
+# Decimal fixed-point representations
 
 The real-world value &pi; can be represented with limited precision using 
 two bytes in **decimal** fixed point format
@@ -53,6 +51,13 @@ The range of numbers that can be represented with this precision using 16 bits i
 (-3.2768, 3.2767)
 ```
 
+The real-world value can also be displayed as an exact ratio of integers
+
+```python
+>>> pid.as_integer_ratio()
+(3927, 1250)
+```
+
 The `.hex` property returns the two's complement representation of the stored integer
 
 ```python
@@ -67,7 +72,10 @@ When `Fixd` stores a negative number, the MSB of the stored integer is always 1:
 '0x8548'
 ```
 
-## Binary fixed-point representations
+
+
+
+# Binary fixed-point representations
 
 Likewise, &pi; can also be represented with limited precision using 
 two bytes in **binary** fixed point format
@@ -113,6 +121,54 @@ When `Fixb` is used to store a negative number, the MSB of the stored integer is
 '0xffce'
 ```
 
+# Contexts
+
+Chainfix provides a fixed-point `context` to control the default behavior for new fixed-point objects.
+
+The current context can be retrieved using
+
+```python
+>>> ctx = get_decimal_context()
+>>> ctx.wordlength
+256
+>>> ctx.precision
+18
+```
+
+for `Fixd` and `Ufixd` values or
+
+```python
+>>> ctx = get_binary_context()
+>>> ctx.wordlength
+32
+>>> ctx.precision
+16
+```
+
+for `Fixb` and `Ufixb` values.
+
+The context can be modified to change the behavior of newly constructed values:
+
+```python
+>>> get_decimal_context().wordlength = 20
+>>> get_decimal_context().precision = 5
+>>> Fixd(pi)
+Fixd(3.14159, 20, 5)
+```
+
+When passed through the constructor, the values for `wordlength` and `precision` always take precedence over the
+context.
+
+```python
+>>> Fixd(pi, precision=10)
+Fixd(3.1415926536, 256, 10)
+```
+
+Note that resulting data type has insufficinet range to represent the value pi.
+
+# Future Work
+
+* Support math operations for fixed-point types using the applicable context
 
 # Contributing
 
