@@ -1,27 +1,108 @@
+# Copyright (c) 2021 PyDefi Development Team.
+# Distributed under the terms of the Modified BSD License.
+
 import pytest
 
 from chainfix import Fixb
 from chainfix import Fixb32
 from chainfix import Fixd
 from chainfix import Fixd32
+from chainfix import get_decimal_context, set_decimal_context
 from chainfix import Ufixb
 from chainfix import Ufixb32
 from chainfix import Ufixd
 from chainfix import Ufixd32
 
 
-def test_fix():
+def test_decimal_context_defaults():
     s = Fixd(0)
-    print(s)
+
+    assert s.precision == 18
+    assert s.wordlength == 256
+
+
+def test_binary_context_defaults():
+    s = Fixb(0)
+    assert s.wordlength == 32
+    assert s.precision == 16
+
+
+def test_binary_context_overrides():
+    s = Fixb(0)
+    assert s.wordlength == 32
+    assert s.precision == 16
+
+    s = Fixb(0, 19, 13)
+    assert s.wordlength == 19
+    assert s.precision == 13
+
+    s = Fixb(0, 19)
+    assert s.wordlength == 19
+    assert s.precision == 16
+
+    s = Fixb(0, precision=2)
+    assert s.wordlength == 32
+    assert s.precision == 2
+
+
+def test_decimal_context_overrides():
+    s = Fixd(0)
+    assert s.wordlength == 256
+    assert s.precision == 18
+
+    s = Fixd(0, 19, 13)
+    assert s.wordlength == 19
+    assert s.precision == 13
+
+    s = Fixd(0, 19)
+    assert s.wordlength == 19
+    assert s.precision == 18
+
+    s = Fixd(0, precision=2)
+    assert s.wordlength == 256
+    assert s.precision == 2
+
+
+def test_ranges():
+    s = Fixd(0, 32)
     assert s.max_int == 2 ** 31 - 1
     assert s.min_int == -(2 ** 31)
 
-    u = Ufixd(0)
-    print(u)
+    u = Ufixd(0, 32)
     assert u.max_int == 2 ** 32 - 1
     assert u.min_int == 0
 
-    assert isinstance(s, Fixd)
+
+def test_get_context1():
+    ctx = get_decimal_context()
+    ctx_save = ctx.copy()
+
+    ctx.wordlength = 18
+    ctx.precision = 8
+
+    x = Fixd(0)
+    assert x.wordlength == 18
+    assert x.precision == 8
+
+    set_decimal_context(ctx_save)
+
+
+def test_get_context2():
+    ctx = get_decimal_context()
+    ctx_save = ctx.copy()
+
+    ctx.wordlength = 33
+    ctx.precision = 7
+
+    x = Fixd(0)
+    assert x.wordlength == 33
+    assert x.precision == 7
+
+    set_decimal_context(ctx_save)
+
+
+def test_fix():
+    s = Fixd(0)
 
     with pytest.raises(TypeError):
         Ufixd("5")
@@ -30,8 +111,6 @@ def test_fix():
 
     assert f.value == 5.12
     assert f.int == 512
-
-    print(f.value)
 
 
 def test_fix_bounds():
@@ -44,23 +123,23 @@ def test_fix_bounds():
     assert s10.max_int == 2 ** 15 - 1
     assert s10.min_int == -(2 ** 15)
 
-    print("Unsigned base 10")
+    # Unsigned base 10
     assert u10.max_int == 65535
     assert u10.lower_bound == 0
     assert u10.upper_bound == 65.535
 
-    print("Signed base 10")
+    # Signed base 10
     assert s10.max_int == 32767
     assert s10.lower_bound == -32.768
     assert s10.upper_bound == 32.767
 
-    print("Unsigned base 2")
+    # Unsigned base 2
     assert u2.min_int == 0
     assert u2.max_int == 65535
     assert u2.lower_bound == 0
     assert u2.upper_bound == 8191.875
 
-    print("Signed base 2")
+    # Signed base 2
     assert s2.min_int == -32768
     assert s2.max_int == 32767
     assert s2.lower_bound == -4096
@@ -102,3 +181,15 @@ def test_32_bit_types():
 
     assert Fixb32(0, 2).lower_bound == -536870912.0
     assert Fixb32(0, 2).upper_bound == 536870911.75
+
+
+def test_integer_ratio():
+    x = Fixb(17 / 8, 32, 6)
+    n, d = x.as_integer_ratio()
+    assert n == 17
+    assert d == 8
+
+    x = Fixd(17 / 8, 32, 6)
+    n, d = x.as_integer_ratio()
+    assert n == 17
+    assert d == 8
