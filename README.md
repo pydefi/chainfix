@@ -1,7 +1,9 @@
 # Welcome to Chainfix
 ![chainfix](https://github.com/pydefi/chainfix/raw/main/docs/logo/chainfix_logo.png)
 
-![ci](https://github.com/pydefi/chainfix/actions/workflows/tox.yml/badge.svg)
+[![CI](https://github.com/pydefi/chainfix/actions/workflows/tox.yml/badge.svg)](https://github.com/pydefi/chainfix/actions/workflows/tox.yml)
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://github.com/pydefi/chainfix)
+[![License](https://img.shields.io/github/license/pydefi/chainfix)](https://github.com/pydefi/chainfix/blob/main/LICENSE.txt)
 
 Chainfix provides a way to represent numbers and perform simple math operations using fixed-point data types.
 
@@ -172,16 +174,26 @@ Note that resulting data type has insufficinet range to represent the value pi.
 
 # Contributing
 
-Chainfix can be installed in developer mode after cloning the repository:
+## Package Installation
+```bash
+# Create virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate
 
-```shell
-$ pip install -e .
+# Install in development mode
+pip install -e .
+
+# Install with testing dependencies
+pip install -e .[dev]  # if dev dependencies are defined
 ```
 
-To run all tests:
+## Testing
+```bash
+# Run all tests
+pytest
 
-```shell
-$ pytest
+# Run tests with tox (multiple Python versions)
+tox
 ```
 
 
