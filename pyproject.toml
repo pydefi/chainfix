@@ -8,7 +8,7 @@ dynamic = ["version"]
 authors = [{name = "PyDefi Development Team", email = "MikesRND@users.noreply.github.com"}]
 description = "Fixed-point data types for signal processing and blockchain applications"
 readme = "README.md"
-license = {file = "LICENSE.txt"}
+license = {file = "LICENSE"}
 requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -40,3 +40,15 @@ where = ["src"]
 
 [tool.setuptools.dynamic]
 version = {attr = "chainfix.__version__"}
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
