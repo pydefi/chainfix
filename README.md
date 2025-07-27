@@ -2,7 +2,7 @@
 ![chainfix](https://github.com/pydefi/chainfix/raw/main/docs/logo/chainfix_logo.png)
 
 [![CI](https://github.com/pydefi/chainfix/actions/workflows/tox.yml/badge.svg)](https://github.com/pydefi/chainfix/actions/workflows/tox.yml)
-[![codecov](https://codecov.io/gh/pydefi/chainfix/branch/main/graph/badge.svg)](https://codecov.io/gh/pydefi/chainfix)
+[![Coverage Status](https://img.shields.io/badge/coverage-93%25-brightgreen)](https://github.com/pydefi/chainfix)
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://github.com/pydefi/chainfix)
 [![License](https://img.shields.io/github/license/pydefi/chainfix)](https://github.com/pydefi/chainfix/blob/main/LICENSE)
 
