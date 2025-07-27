@@ -29,3 +29,12 @@ jobs:
 
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: "tox"
+
+      - name: "Upload coverage to Codecov"
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v5
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
