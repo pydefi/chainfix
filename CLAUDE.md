@@ -2,12 +2,19 @@
 
 ## Project Overview
 
-Chainfix is a Python library providing fixed-point data types for representing numbers with a fixed degree of precision. It supports binary (base-2), decimal (base-10), and arbitrary base-N fixed-point representations. Used in signal processing, hardware design (FPGAs/ASICs), blockchain/DeFi, and financial applications.
+Chainfix is a Python library providing fixed-point data types for representing numbers with a fixed degree of precision. It supports binary (base-2), decimal (base-10), and arbitrary base-N fixed-point representations.
+
+**Primary role**: Scalar specification and verification layer for fixed-point formats — defining, inspecting, and verifying individual fixed-point values with bit-exact precision. Not a bulk compute or tensor library.
+
+**Use cases**:
+- **Blockchain / DeFi**: Decimal fixed-point (256-bit, 18 decimals) matching Solidity conventions
+- **Hardware / FPGA / ASIC / Signal Processing**: Binary fixed-point (8–64 bit) for design verification
+- **Financial**: Decimal fixed-point with exact representation (no floating-point error)
 
 **Version**: 0.1.2 (Alpha)
 **License**: Apache License 2.0
 **Python**: >=3.8 (tested on 3.8–3.13)
-**No external runtime dependencies** — standard library only.
+**No external runtime dependencies** — standard library only (`math`, `fractions`, `enum`, `contextvars`, `typing`).
 
 ## Repository Structure
 
@@ -93,3 +100,29 @@ All public exports are listed in `src/chainfix/__init__.py` via `__all__`. When 
 - **Coverage**: Uploaded to Codecov on Python 3.12 runs only
 - **Publishing**: Triggered on GitHub release → builds sdist + wheel → publishes to PyPI (`.github/workflows/publish-to-test-pypi.yml`)
 - **Build system**: setuptools with `pyproject.toml` (PEP 517/518)
+
+## Known Issues
+
+### Precision loss from float dependency (Bugs #2 and #3)
+
+The `value` property (`fixed_point.py:80`) and stored integer computation (`fixed_point.py:68`) use Python `float` (64-bit IEEE 754), which silently loses precision for the 256-bit blockchain use case. The `as_integer_ratio()` method correctly uses `Fraction` but the rest of the pipeline does not.
+
+**Planned fix**: Accept `str`, `Decimal`, and `Fraction` as input types alongside `int`/`float`. Use `Fraction` internally for stored integer computation when inputs are exact types or word length exceeds 64 bits. Keep the `float` fast path for small word lengths (DSP/hardware use case).
+
+### Missing arithmetic operators
+
+No `__add__`, `__sub__`, `__mul__`, `__eq__`, or `__hash__` are implemented. The README mentions "simple math operations" but `Ufixd(3.1) + Ufixd(3.3)` raises `TypeError`.
+
+### Missing overflow modes
+
+The `Overflow.WRAP` enum exists in `context.py` but only `SATURATE` (raise `ValueError`) is implemented.
+
+## Design Direction
+
+Chainfix is a **scalar specification and verification library**, not a tensor/compute framework. For bulk DSP/GPU workloads, the intended approach is bridging to existing tensor frameworks (PyTorch quantization, NumPy) rather than reimplementing array operations.
+
+The priority roadmap:
+1. Fix scalar precision (accept `Fraction`/`Decimal`/`str`, exact internal arithmetic)
+2. Add basic arithmetic operators with well-defined result type rules
+3. Add `__eq__` and `__hash__` (these are immutable value types)
+4. Add format descriptor / bridge methods for interop with PyTorch, NumPy
