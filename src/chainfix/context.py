@@ -118,7 +118,6 @@ def set_decimal_context(context):
     """Set this thread's context to context."""
     if context in (DefaultDecimalContext,):
         context = context.copy()
-        context.clear_flags()
     _current_decimal_context_var.set(context)
 
 
@@ -144,7 +143,6 @@ def set_binary_context(context):
     """Set this thread's context to context."""
     if context in (DefaultBinaryContext,):
         context = context.copy()
-        context.clear_flags()
     _current_binary_context_var.set(context)
 
 
